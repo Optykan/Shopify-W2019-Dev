@@ -28,14 +28,16 @@ router.get('/:id', async function(req, res, next) {
 
 router.post('/', async function(req, res, next){
 	let shopId = req.body.shop;
-	let product = new Product('Test name', shopId);
-	console.log(product)
+	let name = req.body.name;
+	let product = new Product(name, shopId);
+	
 	try {
 		await ProductDocument.create(product);
 		return (new ResponseWrapper(
 			res,
-			{},
+			product.toPlainObject(),
 			'Product ' + product.id + ' created successfully',
+			ResponseWrapper.STATUS.CREATED
 		)).send();
 	} catch (e) {
 		return (new ResponseWrapper(

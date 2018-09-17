@@ -19,7 +19,6 @@ class Document {
 	}
 
 	static async get(collection, id){
-		console.log(`${collection} ${id}`)
 		let ref = db.collection(collection).doc(id);
 		let doc = await ref.get();
 		if(!doc.exists){
@@ -27,7 +26,20 @@ class Document {
 			err.status = ResponseWrapper.STATUS.NOT_FOUND;
 			throw err;
 		} else {
-			return new this.type(doc.data());
+			return doc.data();
+		}			
+	}
+
+	static async getAll(collection) {
+		let ref = db.collection(collection);
+		let snapshot = await ref.get();
+		if(!doc.exists){
+			let err = new Error(`No document found at ${collection}/`);
+			err.status = ResponseWrapper.STATUS.NOT_FOUND;
+			throw err;
+		} else {
+			let docs = snapshot.map(doc=>doc.data());
+			return docs;
 		}			
 	}
 

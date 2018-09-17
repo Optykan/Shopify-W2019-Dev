@@ -1,3 +1,5 @@
+const Model = require('./../models/Model');
+
 let statuses = {
 	OK: 200,
 	CREATED: 201,
@@ -35,6 +37,9 @@ class ResponseWrapper{
 	}
 
 	send(){
+		if(this.status === statuses.CREATED && this.data.id){
+			this.res.set('Location', this.data.id)
+		}
 		this.res.status(this.status);
 		this.res.json(this.makeResponseObject())
 	}
