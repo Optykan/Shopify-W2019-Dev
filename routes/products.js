@@ -35,7 +35,7 @@ router.post('/', async function(req, res, next){
 		await ProductDocument.create(product);
 		return (new ResponseWrapper(
 			res,
-			product.toPlainObject(),
+			product,
 			'Product ' + product.id + ' created successfully',
 			ResponseWrapper.STATUS.CREATED
 		)).send();

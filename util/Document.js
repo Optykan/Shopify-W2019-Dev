@@ -31,16 +31,12 @@ class Document {
 	}
 
 	static async getAll(collection) {
-		let ref = db.collection(collection);
-		let snapshot = await ref.get();
-		if(!doc.exists){
-			let err = new Error(`No document found at ${collection}/`);
-			err.status = ResponseWrapper.STATUS.NOT_FOUND;
-			throw err;
-		} else {
-			let docs = snapshot.map(doc=>doc.data());
-			return docs;
-		}			
+		let snapshot = await db.collection(collection).get();
+		let docs = [];
+		snapshot.forEach(doc=>{
+			docs.push(doc.data());
+		});
+		return docs;
 	}
 
 	static async exists(collection, id){

@@ -8,7 +8,7 @@ class Model {
 		// remove constructor for use with firebase
 		let plain = Object.assign({}, this);
 		Object.keys(plain).forEach(key=>{
-			if(!plain[key]) plain[key] = null;
+			if(typeof plain[key] === 'undefined') plain[key] = null;
 		})
 		return plain;
 	}

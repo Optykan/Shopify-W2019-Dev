@@ -18,6 +18,7 @@ var app = express();
 var index = require('./routes/index');
 var shops = require('./routes/shops');
 var products = require('./routes/products');
+var orders = require('./routes/orders');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -26,7 +27,8 @@ app.use(cookieParser());
 
 app.use('/', index);
 app.use('/shops', shops);
-app.use('/products', products);
+// app.use('/shops/:shopId/orders', orders);
+// app.use('/shops/:shopId/products', products);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

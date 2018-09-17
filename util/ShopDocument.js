@@ -11,7 +11,13 @@ class ShopDocument extends Document{
 	}
 
 	static async get(id){
-		return await super.get(id);
+		let shop = Shop.fromData(await super.get('shops', id));
+		await shop.loadOrders();
+		return shop;
+	}
+
+	static async getAll(){
+		return await super.getAll('shops');
 	}
 
 	static async update(shop){
