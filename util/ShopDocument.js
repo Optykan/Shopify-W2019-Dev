@@ -12,7 +12,9 @@ class ShopDocument extends Document{
 
 	static async get(id){
 		let shop = Shop.fromData(await super.get('shops', id));
-		await shop.loadOrders();
+
+		// group two calls so we don't wait twice
+		await Promise.all([shop.loadOrders(), shop.loadProducts()]);
 		return shop;
 	}
 

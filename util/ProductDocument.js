@@ -14,6 +14,17 @@ class ProductDocument extends Document{
 		return await super.get('products', id);
 	}
 
+	static async getAll(shopId){
+		shopId = shopId.trim();
+		let products = await super.getAll('products');
+		products = products.filter(product=>{
+			return product.shop === shopId;
+		})
+		products = products.map(product=>Product.fromData(product));
+		return products;
+	}
+
+
 	static async update(product){
 		if(!(product instanceof Product)) throw new TypeError("Expected instance of Product, got: " + typeof data);
 		

@@ -20,10 +20,7 @@ router.get('/', async function(req, res, next) {
 		)).send();
 	} catch (e){
 		console.error(e);
-		return (new ResponseWrapper(
-			res, 
-			e,
-		)).send();
+		return (new ResponseWrapper(res, e)).send();
 	}
 });
 
@@ -38,15 +35,12 @@ router.get('/:id', async function(req, res, next) {
 		)).send();
 	} catch (e){
 		console.error(e);
-		return (new ResponseWrapper(
-			res, 
-			e,
-		)).send();
+		return (new ResponseWrapper(res, e)).send();
 	}
 });
 
 router.post('/', async function(req, res, next){
-	let shop = new Shop('Test name');
+	let shop = new Shop(req.body.shop);
 	try {
 		await ShopDocument.create(shop);
 		return (new ResponseWrapper(
@@ -56,10 +50,7 @@ router.post('/', async function(req, res, next){
 		)).send();
 	} catch (e) {
 		console.error(e);
-		return (new ResponseWrapper(
-			res, 
-			e,
-		)).send();
+		return (new ResponseWrapper(res, e)).send();
 	}
 });
 
@@ -94,9 +85,98 @@ router.delete('/:id', async function(req, res, next){
 	}
 })
 
-/* ********************************
-ORDERS
-*/
+/* ************************
+ * ------ PRODUCTS ------ *
+ ************************ */
+
+/* GET products */
+router.get('/:shopId/products/', async function(req, res, next) {
+	try {
+		let result = await ProductDocument.getAll(req.params.shopId);
+		return (new ResponseWrapper(
+			res,
+			result,
+			'Retrieved Products successfully'
+		)).send();
+	} catch (e){
+		console.error(e);
+		return (new ResponseWrapper(res, e)).send();
+	}
+});
+
+router.get('/:shopId/products/:id', async function(req, res, next) {
+	try {
+		let result = await ProductDocument.get(req.params.id);
+		return (new ResponseWrapper(
+			res,
+			result,
+			'Retrieved Product successfully'
+		)).send();
+	} catch (e){
+		console.error(e);
+		return (new ResponseWrapper(res, e)).send();
+	}
+});
+
+router.post('/:shopId/products/', async function(req, res, next){
+	let shopId = req.params.shopId;
+	let name = req.body.name;
+	let value = req.body.value;
+	
+	try {
+		let product = new Product(name, shopId, parseFloat(value));
+		await ProductDocument.create(product);
+		return (new ResponseWrapper(
+			res,
+			product,
+			'Product ' + product.id + ' created successfully',
+			ResponseWrapper.STATUS.CREATED
+		)).send();
+	} catch (e) {
+		console.error(e);
+		return (new ResponseWrapper(res, e)).send();
+	}
+});
+
+router.put('/:shopId/products/:id', async function(req, res, next){
+	let name = req.body.name;
+	let shopId = req.params.shopId;
+	let value = req.body.value;
+
+	try {
+		let product = new Product(name, shopId, value)
+	} catch (e){
+
+	}
+
+})
+
+router.delete('/:shopId/products/:id', async function(req, res, next){
+	try{
+		console.log(await ProductDocument.exists(req.params.id));
+		if(!(await ProductDocument.exists(req.params.id))){
+			let err = new Error('Product ' + req.params.id + ' not found');
+			err.status = ResponseWrapper.STATUS.NOT_FOUND;
+			throw err;
+		}
+
+		await ProductDocument.delete(req.params.id);
+
+		return (new ResponseWrapper(
+			res,
+			{},
+			'Product ' + req.params.id + ' deleted successfully',
+		)).send();
+	} catch (e){
+		console.error(e);
+		return (new ResponseWrapper(res, e)).send();
+	}
+})
+
+
+/* **********************
+ * ------ ORDERS ------ *
+ ********************** */
 
 /* GET orders */
 router.get('/:shopId/orders/', async function(req, res, next) {
@@ -109,10 +189,7 @@ router.get('/:shopId/orders/', async function(req, res, next) {
 		)).send();
 	} catch (e){
 		console.error(e);
-		return (new ResponseWrapper(
-			res, 
-			e,
-		)).send();
+		return (new ResponseWrapper(res, e)).send();
 	}
 });
 
@@ -126,19 +203,18 @@ router.get('/:shopId/orders/:id', async function(req, res, next) {
 		)).send();
 	} catch (e){
 		console.error(e);
-		return (new ResponseWrapper(
-			res, 
-			e,
-		)).send();
+		return (new ResponseWrapper(res, e)).send();
 	}
 });
 
 router.post('/:shopId/orders/', async function(req, res, next){
-	let name = req.body.name;
 	let shopId = req.params.shopId.trim();
-	let order = new Order(name, shopId);
-	
+	let products = req.body.products || [];
+	let name = req.body.name;
+
 	try {
+		let order = new Order(name, shopId, products);
+
 		await OrderDocument.create(order);
 		return (new ResponseWrapper(
 			res,
@@ -148,10 +224,7 @@ router.post('/:shopId/orders/', async function(req, res, next){
 		)).send();
 	} catch (e) {
 		console.error(e);
-		return (new ResponseWrapper(
-			res, 
-			e,
-		)).send();
+		return (new ResponseWrapper(res, e)).send();
 	}
 });
 
@@ -178,87 +251,78 @@ router.delete('/:shopId/orders/:id', async function(req, res, next){
 		)).send();
 	} catch (e){
 		console.error(e);
-		return (new ResponseWrapper(
-			res, 
-			e
-		)).send();
+		return (new ResponseWrapper(res, e)).send();
 	}
 })
 
-/* ********************************
-PRODUCTS
-*/
+/* ************************
+ * ----- LINE ITEMS ----- *
+ ************************ */
 
-/* GET products */
-router.get('/:shopId/products/', function(req, res, next) {
+// /* GET products */
+// router.get('/:shopId/orders/', function(req, res, next) {
   
-});
+// });
 
-router.get('/:shopId/products/:id', async function(req, res, next) {
-	try {
-		let result = await ProductDocument.get(req.params.id);
-		return (new ResponseWrapper(
-			res,
-			result,
-			'Retrieved Product successfully'
-		)).send();
-	} catch (e){
-		return (new ResponseWrapper(
-			res, 
-			e,
-		)).send();
-	}
-});
+// router.get('/:shopId/orders/:id', async function(req, res, next) {
+// 	try {
+// 		let result = await ProductDocument.get(req.params.id);
+// 		return (new ResponseWrapper(
+// 			res,
+// 			result,
+// 			'Retrieved Product successfully'
+// 		)).send();
+// 	} catch (e){
+// 		console.error(e);
+// 		return (new ResponseWrapper(res, e)).send();
+// 	}
+// });
 
-router.post('/:shopId/products/', async function(req, res, next){
-	let shopId = req.body.shop;
-	let name = req.body.name;
-	let product = new Product(name, shopId);
+// router.post('/:shopId/orders/', async function(req, res, next){
+// 	let shopId = req.body.shop;
+// 	let name = req.body.name;
+// 	let product = new Product(name, shopId);
 	
-	try {
-		await ProductDocument.create(product);
-		return (new ResponseWrapper(
-			res,
-			product,
-			'Product ' + product.id + ' created successfully',
-			ResponseWrapper.STATUS.CREATED
-		)).send();
-	} catch (e) {
-		return (new ResponseWrapper(
-			res, 
-			e,
-		)).send();
-	}
-});
+// 	try {
+// 		await ProductDocument.create(product);
+// 		return (new ResponseWrapper(
+// 			res,
+// 			product,
+// 			'Product ' + product.id + ' created successfully',
+// 			ResponseWrapper.STATUS.CREATED
+// 		)).send();
+// 	} catch (e) {
+// 		return (new ResponseWrapper(res, e)).send();
+// 	}
+// });
 
-router.put('/:shopId/products/:id', async function(req, res, next){
-	let product = new Product(
-		req.body.name
-	)
-})
+// router.put('/:shopId/orders/:id', async function(req, res, next){
+// 	let product = new Product(
+// 		req.body.name
+// 	)
+// })
 
-router.delete('/:shopId/products/:id', async function(req, res, next){
-	try{
-		console.log(await ProductDocument.exists(req.params.id));
-		if(!(await ProductDocument.exists(req.params.id))){
-			let err = new Error('Product ' + req.params.id + ' not found');
-			err.status = ResponseWrapper.STATUS.NOT_FOUND;
-			throw err;
-		}
+// router.delete('/:shopId/orders/:id', async function(req, res, next){
+// 	try{
+// 		console.log(await ProductDocument.exists(req.params.id));
+// 		if(!(await ProductDocument.exists(req.params.id))){
+// 			let err = new Error('Product ' + req.params.id + ' not found');
+// 			err.status = ResponseWrapper.STATUS.NOT_FOUND;
+// 			throw err;
+// 		}
 
-		await ProductDocument.delete(req.params.id);
+// 		await ProductDocument.delete(req.params.id);
 
-		return (new ResponseWrapper(
-			res,
-			{},
-			'Product ' + req.params.id + ' deleted successfully',
-		)).send();
-	} catch (e){
-		return (new ResponseWrapper(
-			res, 
-			e
-		)).send();
-	}
-})
+// 		return (new ResponseWrapper(
+// 			res,
+// 			{},
+// 			'Product ' + req.params.id + ' deleted successfully',
+// 		)).send();
+// 	} catch (e){
+// 		console.error(e);
+// 		return (new ResponseWrapper(res, e)).send();
+// 	}
+// })
+
 
 module.exports = router;

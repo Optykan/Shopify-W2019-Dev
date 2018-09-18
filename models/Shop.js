@@ -19,6 +19,10 @@ class Shop extends Model {
 	async loadOrders(){
 		this.orders = await OrderDocument.getAll(this.id);
 	}
+
+	async loadProducts(){
+		this.products = await ProductDocument.getAll(this.id);
+	}
 }
 
 module.exports = Shop;

@@ -4,6 +4,7 @@ let statuses = {
 	OK: 200,
 	CREATED: 201,
 	NO_CONTENT: 204,
+	BAD_REQUEST: 400,
 	UNAUTHORIZED: 401,
 	NOT_FOUND: 404,
 	CONFLICT: 409,
@@ -14,7 +15,11 @@ class ResponseWrapper{
 	constructor(res, data, message, status){
 		if(data instanceof Error){
 			message = data.message;
-			status = data.status || statuses.SERVER_ERROR;
+			if(data instanceof TypeError){
+				status = statuses.BAD_REQUEST;
+			} else {
+				status = data.status || statuses.SERVER_ERROR;
+			}
 			data = JSON.stringify(data)
 		}
 		this.res = res;
@@ -38,6 +43,7 @@ class ResponseWrapper{
 
 	send(){
 		if(this.status === statuses.CREATED && this.data.id){
+			// RFC7231-compliant
 			this.res.set('Location', this.data.id)
 		}
 		this.res.status(this.status);
