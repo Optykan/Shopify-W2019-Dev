@@ -5,14 +5,14 @@ const ProductDocument = require('./../util/ProductDocument');
 
 class Shop extends Model {
 	constructor(name){
+		if(!name) throw new TypeError("Expected a name, got " + name)
 		let id = Utils.random('shop-');
 		super(id, name);
 	}
 
 	static fromData(data){
-		let shop = new Shop();
+		let shop = new Shop(data.name);
 		shop.id = data.id;
-		shop.name = data.name;
 		return shop;
 	}
 

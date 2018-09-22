@@ -1,10 +1,9 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+const ResponseWrapper = require('./util/ResponseWrapper');
 
 const admin = require('firebase-admin');
 var serviceAccount = require('./serviceKey.json');
@@ -17,8 +16,6 @@ var app = express();
 
 var index = require('./routes/index');
 var shops = require('./routes/shops');
-var products = require('./routes/products');
-var orders = require('./routes/orders');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -43,9 +40,7 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  (new ResponseWrapper(res, err)).send();
 });
 
 module.exports = app;

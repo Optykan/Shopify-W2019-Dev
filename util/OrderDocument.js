@@ -55,7 +55,7 @@ class OrderDocument extends Document{
 			order.recalculateValue();
 		}
 		
-		return await super.update(order);
+		return await super.update('orders', order);
 	}
 
 	static async delete(id){

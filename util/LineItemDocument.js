@@ -14,10 +14,10 @@ class LineItemDocument extends Document{
 		parentId = parentId.trim();
 		let lineItems = await super.getAll('lineItems');
 		lineItems = lineItems.filter(lineItem=>{
-			if(parentId.startsWith('shop')){
-				return lineItem.shop === parentId;
-			} else {
+			if(parentId.startsWith('product')){
 				return lineItem.product === parentId;
+			} else {
+				return lineItem.order === parentId;
 			}
 		})
 		lineItems = lineItems.map(lineItem=>LineItem.fromData(lineItem));
@@ -31,7 +31,7 @@ class LineItemDocument extends Document{
 	static async update(lineItem){
 		if(!(lineItem instanceof LineItem)) throw new TypeError("Expected instance of LineItem, got: " + typeof data);
 		
-		return await super.update(lineItem);
+		return await super.update('lineItems', lineItem);
 	}
 
 	static async delete(id){

@@ -3,12 +3,13 @@ const Utils = require('./../util/Utils');
 
 class Product extends Model {
 	constructor(name, shop, value){
-		if(!name || !shop || (!value && value !== 0)) throw new TypeError(`All arguments required; got: name=${name}, shop=${shop}, value=${value}`);
+		// check not necessary if w
+		// if(!name || !shop || (!value && value !== 0)) throw new TypeError(`All arguments required; got: name=${name}, shop=${shop}, value=${value}`);
 		
 		let id = Utils.random('product-');
 		super(id, name);
-		this.shop = shop.trim();
-		this.value = value;
+		this.shop = shop.trim ? shop.trim() : shop;
+		this.value = value || 0;
 	}
 
 	static fromData(data){

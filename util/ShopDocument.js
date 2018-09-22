@@ -25,7 +25,7 @@ class ShopDocument extends Document{
 	static async update(shop){
 		if(!(shop instanceof Shop)) throw new TypeError("Create expects instance of Shop, got: " + typeof data);
 		
-		return await super.update(shop);
+		return await super.update('shops', shop);
 	}
 
 	static async delete(id){

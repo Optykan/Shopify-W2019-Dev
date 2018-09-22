@@ -20,7 +20,6 @@ class ResponseWrapper{
 			} else {
 				status = data.status || statuses.SERVER_ERROR;
 			}
-			data = JSON.stringify(data)
 		}
 		this.res = res;
 		this.data = data || { empty: true };

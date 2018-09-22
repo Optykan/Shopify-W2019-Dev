@@ -40,12 +40,12 @@ router.get('/:id', async function(req, res, next) {
 });
 
 router.post('/', async function(req, res, next){
-	let shop = new Shop(req.body.shop);
 	try {
-		await ShopDocument.create(shop);
+		let shop = new Shop(req.body.name);
+		let ret = await ShopDocument.create(shop);
 		return (new ResponseWrapper(
 			res,
-			{},
+			ret,
 			'Shop ' + shop.id + ' created successfully',
 		)).send();
 	} catch (e) {
@@ -55,9 +55,21 @@ router.post('/', async function(req, res, next){
 });
 
 router.put('/:id', async function(req, res, next){
-	let shop = new Shop(
-		req.body.name
-	)
+	try {
+		let shop = new Shop(req.body.name)
+		shop.id = req.params.id;
+
+		let ret = await ShopDocument.update(shop);
+		return (new ResponseWrapper(
+			res,
+			ret,
+			'Shop ' + ret.id + ' updated successfully',
+		)).send();
+	} catch (e) {
+		console.error(e);
+		return (new ResponseWrapper(res, e)).send();
+	}
+
 })
 
 router.delete('/:id', async function(req, res, next){
@@ -139,16 +151,24 @@ router.post('/:shopId/products/', async function(req, res, next){
 });
 
 router.put('/:shopId/products/:id', async function(req, res, next){
-	let name = req.body.name;
 	let shopId = req.params.shopId;
+	let name = req.body.name;
 	let value = req.body.value;
-
+	
 	try {
-		let product = new Product(name, shopId, value)
-	} catch (e){
-
+		let product = new Product(name, shopId, parseFloat(value));
+		product.id = req.params.id;
+		let ret = await ProductDocument.update(product);
+		return (new ResponseWrapper(
+			res,
+			ret,
+			'Product ' + product.id + ' updated successfully',
+			ResponseWrapper.STATUS.OK
+		)).send();
+	} catch (e) {
+		console.error(e);
+		return (new ResponseWrapper(res, e)).send();
 	}
-
 })
 
 router.delete('/:shopId/products/:id', async function(req, res, next){
@@ -258,71 +278,32 @@ router.delete('/:shopId/orders/:id', async function(req, res, next){
 /* ************************
  * ----- LINE ITEMS ----- *
  ************************ */
+ router.get('/:shopId/lineItems/', async function(req, res, next) {
+	try {
+		let result = await LineItemDocument.getAll(req.params.shopId);
+		return (new ResponseWrapper(
+			res,
+			result,
+			'Retrieved Line Items successfully'
+		)).send();
+	} catch (e){
+		console.error(e);
+		return (new ResponseWrapper(res, e)).send();
+	}
+});
 
-// /* GET products */
-// router.get('/:shopId/orders/', function(req, res, next) {
-  
-// });
-
-// router.get('/:shopId/orders/:id', async function(req, res, next) {
-// 	try {
-// 		let result = await ProductDocument.get(req.params.id);
-// 		return (new ResponseWrapper(
-// 			res,
-// 			result,
-// 			'Retrieved Product successfully'
-// 		)).send();
-// 	} catch (e){
-// 		console.error(e);
-// 		return (new ResponseWrapper(res, e)).send();
-// 	}
-// });
-
-// router.post('/:shopId/orders/', async function(req, res, next){
-// 	let shopId = req.body.shop;
-// 	let name = req.body.name;
-// 	let product = new Product(name, shopId);
-	
-// 	try {
-// 		await ProductDocument.create(product);
-// 		return (new ResponseWrapper(
-// 			res,
-// 			product,
-// 			'Product ' + product.id + ' created successfully',
-// 			ResponseWrapper.STATUS.CREATED
-// 		)).send();
-// 	} catch (e) {
-// 		return (new ResponseWrapper(res, e)).send();
-// 	}
-// });
-
-// router.put('/:shopId/orders/:id', async function(req, res, next){
-// 	let product = new Product(
-// 		req.body.name
-// 	)
-// })
-
-// router.delete('/:shopId/orders/:id', async function(req, res, next){
-// 	try{
-// 		console.log(await ProductDocument.exists(req.params.id));
-// 		if(!(await ProductDocument.exists(req.params.id))){
-// 			let err = new Error('Product ' + req.params.id + ' not found');
-// 			err.status = ResponseWrapper.STATUS.NOT_FOUND;
-// 			throw err;
-// 		}
-
-// 		await ProductDocument.delete(req.params.id);
-
-// 		return (new ResponseWrapper(
-// 			res,
-// 			{},
-// 			'Product ' + req.params.id + ' deleted successfully',
-// 		)).send();
-// 	} catch (e){
-// 		console.error(e);
-// 		return (new ResponseWrapper(res, e)).send();
-// 	}
-// })
-
+router.get('/:shopId/lineItems/:lineItemId', async function(req, res, next) {
+	try {
+		let result = await LineItemDocument.get(req.params.lineItemId);
+		return (new ResponseWrapper(
+			res,
+			result,
+			'Retrieved Line Item successfully'
+		)).send();
+	} catch (e){
+		console.error(e);
+		return (new ResponseWrapper(res, e)).send();
+	}
+});
 
 module.exports = router;

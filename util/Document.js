@@ -3,12 +3,18 @@ const Model = require('./../models/Model.js');
 const admin = require('firebase-admin');
 const db = admin.firestore(); 
 
+/* This generic Document object provides all the CRUD
+ * functionality required to perform database actions.
+ * Each <Type>Document is merely a wrapper around this.
+ */
+
 class Document {
 	static async create(collection, data){
-		let insert = data.toPlainObject();
-		console.log(insert);
+		// firebase only accepts plain objects
+		let insert = data.toPlainObject ? data.toPlainObject() : data;
 		let ref = db.collection(collection).doc(insert.id);
-		return await ref.set(insert);
+		await ref.set(insert);
+		return data;
 	}
 
 	static async update(collection, data){
@@ -16,7 +22,8 @@ class Document {
 
 		let existing = await Document.get(collection, data.id);
 
-		// remove null and undefined keys so we can merge the two objects together
+		// remove null and undefined keys so we can merge the two objects together without
+		// overwriting keys that exist with null/undefined
 		Object.keys(data).forEach(key=>{
 			if(typeof data[key] === "null" || typeof data[key] === "undefined") delete data[key];
 		});

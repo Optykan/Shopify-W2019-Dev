@@ -28,7 +28,7 @@ class ProductDocument extends Document{
 	static async update(product){
 		if(!(product instanceof Product)) throw new TypeError("Expected instance of Product, got: " + typeof data);
 		
-		return await super.update(product);
+		return await super.update('products', product);
 	}
 
 	static async delete(id){
