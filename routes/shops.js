@@ -7,9 +7,23 @@ const OrderDocument = require('./../util/OrderDocument');
 const Order = require('./../models/Order');
 const LineItemDocument = require('./../util/LineItemDocument');
 const LineItem = require('./../models/LineItem');
-
+const admin = require('firebase-admin');
+const cookieParser = require('cookie-parser');
 var express = require('express');
 var router = express.Router();
+
+// router.use(function(req, res, next){
+// 	let cookie = req.cookies.session || ""
+	
+// 	admin.auth().verifySessionCookie(cookie, true).then(decodedClaims =>{
+// 		next();
+// 	}).catch(err=>{
+// 		console.error(err)
+// 		let error = new Error(err);
+// 		error.status = 401;
+// 		return next(error);
+// 	})
+// })
 
 /* GET shops */
 router.get('/', async function(req, res, next) {

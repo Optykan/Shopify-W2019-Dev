@@ -6,16 +6,36 @@ All routes return a JSON representation of `/util/ResponseWrapper` which is an o
 {
 	"message": <string>,
 	"status": <integer>,
-	"data": <an instance of /models/Model OR an array of Model OR Error OR {}>,
+	"data": <depends, see below>,
 	"ok": <boolean>
 }
 ```
 
-The data property will be a single Model if an ID is specified, an array if no ID is specified, an Error object if an error has ocurred, or {} for `DELETE` requests.
+The data property will be a single Model if an ID is specified, an array of Models if no ID is specified, an Error object if an error has ocurred, or {} for `DELETE` requests.
 
 If the status is `HTTP 201 Created`, a Location header will be provided with the ID of the new item in accordance with RFC7231.
 
 POST/PUT requests should have their content type specified as `application/x-www-form-urlencoded`.
+
+##### IMPORTANT AUTHENTICATION NOTE
+
+All requests to `/shops/...` endpoints must have a `token` body parameter in addition to whatever is specified for that endpoint. The token can be found by signing in with the `/auth/signIn` endpoint.
+
+### `/auth`
+
+Authentication-related stuff goes here
+
+##### POST `/auth/signIn`
+
+Signs in a user and returns their token.
+
+Body Params:
+ - email : the user's email
+ - password : the user's password
+
+There is a test account with email `test@test.user` and password `password`.
+
+The data returned is a string containing a token.
 
 ### `/shops`
 
