@@ -8,7 +8,12 @@ class Order extends Model {
 		super(id, name);
 		this.shop = shop.trim();
 		this.value = 0;
-		this.lineItems = lineItems;
+		if(lineItems && !Array.isArray(lineItems)){
+			// lineItems is just one line item, and not an array
+			this.lineItems = [ lineItems ]; 
+		} else {
+			this.lineItems = lineItems;
+		}
 	}
 
 	static fromData(data){
@@ -19,7 +24,7 @@ class Order extends Model {
 	}
 
 	async loadLines(){
-		this.lineItems = await LineItemDocument.getAll(this.shop);
+		this.lineItems = await LineItemDocument.getAll(this.id);
 		this.recalculateValue();
 	}
 

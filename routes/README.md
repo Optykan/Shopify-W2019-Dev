@@ -103,7 +103,14 @@ The value of the order will automatically be calculated based on the value of th
 
 ##### PUT `/shops/:shopId/orders/:orderId`
 
-Not implemented.
+Updates an existing with the following parameters:
+
+Body Params:
+ - products : an array of product IDs included in this order
+
+The value of the order will be automatically recalculated. Any existing LineItems should be deleted, but this is not implemented yet.
+
+Returns an instance of `Order`.
 
 ##### DELETE `/shops/:shopId/orders/:orderId`
 

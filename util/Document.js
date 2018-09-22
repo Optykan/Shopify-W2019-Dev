@@ -2,6 +2,7 @@ const ResponseWrapper = require('./ResponseWrapper');
 const Model = require('./../models/Model.js');
 const admin = require('firebase-admin');
 const db = admin.firestore(); 
+const Utils = require('./Utils')
 
 /* This generic Document object provides all the CRUD
  * functionality required to perform database actions.
@@ -11,7 +12,7 @@ const db = admin.firestore();
 class Document {
 	static async create(collection, data){
 		// firebase only accepts plain objects
-		let insert = data.toPlainObject ? data.toPlainObject() : data;
+		let insert = data.toPlainObject ? data.toPlainObject() : Utils.toPlainObject(data);
 		let ref = db.collection(collection).doc(insert.id);
 		await ref.set(insert);
 		return data;

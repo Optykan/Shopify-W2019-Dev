@@ -5,6 +5,8 @@ const ProductDocument = require('./../util/ProductDocument');
 const Product = require('./../models/Product');
 const OrderDocument = require('./../util/OrderDocument');
 const Order = require('./../models/Order');
+const LineItemDocument = require('./../util/LineItemDocument');
+const LineItem = require('./../models/LineItem');
 
 var express = require('express');
 var router = express.Router();
@@ -249,9 +251,23 @@ router.post('/:shopId/orders/', async function(req, res, next){
 });
 
 router.put('/:shopId/orders/:id', async function(req, res, next){
-	let order = new Order(
-		req.body.name
-	)
+	let shopId = req.params.shopId;
+	let products = req.body.products || [];
+	let name = req.body.name;
+
+	try {
+		let order = new Order(name, shopId, products);
+		order.id = req.params.id;
+		let ret = await OrderDocument.update(order);
+		return (new ResponseWrapper(
+			res,
+			ret,
+			'Order ' + order.id + ' updated successfully',
+		)).send();
+	} catch (e) {
+		console.error(e);
+		return (new ResponseWrapper(res, e)).send();
+	}
 })
 
 router.delete('/:shopId/orders/:id', async function(req, res, next){
@@ -278,9 +294,9 @@ router.delete('/:shopId/orders/:id', async function(req, res, next){
 /* ************************
  * ----- LINE ITEMS ----- *
  ************************ */
- router.get('/:shopId/lineItems/', async function(req, res, next) {
+ router.get('/:shopId/:parentType/:parentId/lineItems/', async function(req, res, next) {
 	try {
-		let result = await LineItemDocument.getAll(req.params.shopId);
+		let result = await LineItemDocument.getAll(req.params.parentId);
 		return (new ResponseWrapper(
 			res,
 			result,
@@ -292,7 +308,7 @@ router.delete('/:shopId/orders/:id', async function(req, res, next){
 	}
 });
 
-router.get('/:shopId/lineItems/:lineItemId', async function(req, res, next) {
+router.get('/:shopId/:parentType/:parentId/:lineItemId', async function(req, res, next) {
 	try {
 		let result = await LineItemDocument.get(req.params.lineItemId);
 		return (new ResponseWrapper(

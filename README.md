@@ -6,6 +6,10 @@ This readme is for more on the thought development process instead of documentat
 
 Due to time constraints (and other homework), I chose to go with a Firestore database as it is extremely easy to set up and I was already familiar with it.
 
+## ID Generation
+
+IDs are generated based on the Date timestamp and a randomly generated string resulting in a total length of 20 characters. When scaled up, this may result in ID collisions. However, in a production database we would probably use SQL for data instead of NoSQL, and make use of auto increment.
+
 ## Routing
 
 Everything is located under the `/shops` endpoint, as Shops contain all the desired underlying items.

@@ -13,20 +13,24 @@ class OrderDocument extends Document{
 	static async create(data){
 		if(!(data instanceof Order)) throw new TypeError("Expected instance of Order, got: " + typeof data);
 
+		// map all the product IDs to instances of LineItem
 		data.lineItems = data.lineItems.map(productId=>{
 			return LineItem.make(productId, data.id);
 		});
+		// use Promise.all to resolve promises concurrently (performance)
 		data.lineItems = await Promise.all(data.lineItems);
 
-		console.log(data.lineItems)
-
+		// create all the Line Items and store them in the database
 		let toMake = data.lineItems.map(lineItem=>{
 			return LineItemDocument.create(lineItem);
 		})
+		// concurrent
 		await Promise.all(toMake);
 
+		// update the dollar value
 		data.recalculateValue();
 
+		// finally create the order itself.
 		return await super.create('orders', data);
 	}
 
@@ -49,9 +53,24 @@ class OrderDocument extends Document{
 		 * have to recalculate the value of the line items 
 		 */
 		if(!(order instanceof Order)) throw new TypeError("Expected instance of Order, got: " + typeof data);
+
+		// if there are no line items defined, or there are line items and they are simply ID's instead of actual instances
 		if(!order.lineItems){
 			await order.loadLines();
-		} else {
+		} else if (Array.isArray(order.lineItems) && order.lineItems.length && order.lineItems[0] instanceof LineItem){
+			order.recalculateValue();
+	    } else {
+			// load the line items just like create
+			order.lineItems = order.lineItems.map(productId=>{
+				return LineItem.make(productId, order.id);
+			});
+			order.lineItems = await Promise.all(order.lineItems);
+
+			let toMake = order.lineItems.map(lineItem=>{
+				return LineItemDocument.create(lineItem);
+			})
+			await Promise.all(toMake);
+
 			order.recalculateValue();
 		}
 		

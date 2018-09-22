@@ -14,6 +14,7 @@ class LineItemDocument extends Document{
 		parentId = parentId.trim();
 		let lineItems = await super.getAll('lineItems');
 		lineItems = lineItems.filter(lineItem=>{
+			// we can filter line items either by the product or order id
 			if(parentId.startsWith('product')){
 				return lineItem.product === parentId;
 			} else {
