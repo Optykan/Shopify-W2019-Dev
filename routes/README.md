@@ -17,26 +17,6 @@ If the status is `HTTP 201 Created`, a Location header will be provided with the
 
 POST/PUT requests should have their content type specified as `application/x-www-form-urlencoded`.
 
-##### IMPORTANT AUTHENTICATION NOTE
-
-All requests to `/shops/...` endpoints must have a `token` body parameter in addition to whatever is specified for that endpoint. The token can be found by signing in with the `/auth/signIn` endpoint.
-
-### `/auth`
-
-Authentication-related stuff goes here
-
-##### POST `/auth/signIn`
-
-Signs in a user and returns their token.
-
-Body Params:
- - email : the user's email
- - password : the user's password
-
-There is a test account with email `test@test.user` and password `password`.
-
-The data returned is a string containing a token.
-
 ### `/shops`
 
 ##### GET `/shops`
