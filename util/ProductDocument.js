@@ -17,9 +17,13 @@ class ProductDocument extends Document{
 	static async getAll(shopId){
 		shopId = shopId.trim();
 		let products = await super.getAll('products');
+
+		// filter all the products that belong to this shop
 		products = products.filter(product=>{
 			return product.shop === shopId;
 		})
+
+		// create instances of Product for access to instance methods
 		products = products.map(product=>Product.fromData(product));
 		return products;
 	}

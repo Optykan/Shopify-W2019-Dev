@@ -7,8 +7,9 @@ let Utils = {
 		return (Date.now() + Math.floor(Math.random() * 9999999).toString()).padEnd(20, '0');
 	},
 
+	// recursively remove all custom constructors from an object
 	toPlainObject: function(object){
-		if(!object) return null;
+		if(typeof object === 'undefined' || typeof object === 'null') return null;
 		if(Array.isArray(object)){
 			object = object.map(elem=>{
 				return Utils.toPlainObject(elem);

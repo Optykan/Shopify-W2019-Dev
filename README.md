@@ -2,6 +2,8 @@
 
 This readme is for more on the thought development process instead of documentation on how to use it. For the documentation, check out the readme in `/routes`.
 
+This API is hosted at `ec2-18-191-226-153.us-east-2.compute.amazonaws.com:4000`.
+
 ## Database Selection
 
 Due to time constraints (and other homework), I chose to go with a Firestore database as it is extremely easy to set up and I was already familiar with it.
@@ -35,3 +37,5 @@ There is a Dockerfile based on a Node v10 image. The server runs on port 3000.
 There is plenty of room for this API to scale (including implementing all the functionality marked with "not implemented").
 
 Furthermore, we could implement all deletes as "soft deletes", so they will function as though the object was deleted, but it still exists in the database. This is useful for looking at orders with products that no longer exist.
+
+Authentication is still a work in progress....

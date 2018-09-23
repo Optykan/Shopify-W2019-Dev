@@ -16,6 +16,7 @@ var router = express.Router();
 // 	let cookie = req.cookies.session || ""
 	
 // 	admin.auth().verifySessionCookie(cookie, true).then(decodedClaims =>{
+//      // if a user is logged in we just grant them full permissions
 // 		next();
 // 	}).catch(err=>{
 // 		console.error(err)

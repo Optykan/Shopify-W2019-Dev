@@ -6,6 +6,7 @@ class Model {
 
 	toPlainObject(){
 		// remove constructor for use with firebase
+		// we would use this over Utils.toPlainObject in case an object has custom serialization
 		let plain = Object.assign({}, this);
 		Object.keys(plain).forEach(key=>{
 			if(typeof plain[key] === 'undefined') plain[key] = null;
