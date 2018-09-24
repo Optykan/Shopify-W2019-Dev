@@ -60,8 +60,8 @@ Returns a listing of all the products associated with the shop. Accepts no addit
 Creates a new product with the following parameters:
 
 Body Params:
- - name : the name of the product
- - value : the value of the product
+ - name : the name of the product (default: `null`)
+ - value : the value of the product (default: 0)
 
 Returns an instance of `Product`.
 

@@ -2,6 +2,13 @@ const Model = require('./Model')
 const Utils = require('./../util/Utils');
 const LineItemDocument = require('./../util/LineItemDocument');
 
+/* An Order reprsents an instance of an order. It contains the following fields:
+ * - name : the name of the order
+ * - shop : the ID of the shop
+ * - lineItems : an array of associated line items
+ * - value : the value of this order (the sum of the value of the line items)
+ */
+
 class Order extends Model {
 	constructor(name, shop, lineItems){
 		let id = Utils.random('order-');
