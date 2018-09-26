@@ -16,6 +16,16 @@ IDs are generated based on the Date timestamp and a randomly generated string re
 
 Everything is located under the `/shops` endpoint, as Shops contain all the desired underlying items.
 
+## Sample Data
+
+The following data is preloaded:
+- `shop-15376319340807223960` : A shop with a few products and orders
+- `product-15376340482312617581` : A product inside that shop
+- `product-15376365415387061024` : Another product in the shop
+- `order-15376363535176877528` : An order under the shop that contains both of the aforementioned products
+- `lineItem-15376377798419850762` : A line item inside the order referring to `product-15376365415387061024`
+- `lineItem-15376377797905547094` : Another line item referring to `product-15376340482312617581`
+
 ### Products
 
 The only special thing about a product is that deleting the product should not delete the corresponding line items. References to the product will become invalid, but it is up to the user to check whether the product exists. This is because deleting a product should not delete instances where it was purchased in the past. Similarly, updating the price of a product does not update the corresponding line item.
